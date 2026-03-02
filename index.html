@@ -3,58 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ยินดีต้อนรับสู่เว็บไซต์ของฉัน</title>
+    <title>AGAIN SCRIPT HUB | แหล่งรวมสคริปต์ฟรี</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* สไตล์พื้นฐาน */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 3rem;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
-            max-width: 400px;
-            width: 90%;
-        }
-        h1 { margin-bottom: 0.5rem; font-size: 2.5rem; }
-        p { font-size: 1.1rem; opacity: 0.9; }
-        .btn {
-            display: inline-block;
-            margin-top: 1.5rem;
-            padding: 10px 25px;
-            background: #fff;
-            color: #764ba2;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
+        body { font-family: 'Prompt', sans-serif; background-color: #0b0f1a; color: #e2e8f0; }
+        .script-card { background: #161d2f; border: 1px solid #2d3748; transition: all 0.3s ease; }
+        .script-card:hover { border-color: #3b82f6; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1); }
+        .badge-update { background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
+        .copy-btn:active { transform: scale(0.95); }
     </style>
 </head>
-<body>
+<body class="pb-20">
 
-    <div class="container">
-        <h1>สวัสดี! 👋</h1>
-        <p>นี่คือเว็บไซต์แรกของฉันบน <b>GitHub Pages</b></p>
-        <p>กำลังอยู่ในช่วงพัฒนาครับ</p>
-        <a href="https://github.com" class="btn">ไปที่ GitHub ของฉัน</a>
-    </div>
+    <header class="py-16 px-6 text-center border-b border-white/5 bg-slate-900/50">
+        <h1 class="text-4xl font-extrabold text-white mb-4 italic">AGAIN <span class="text-blue-500">SCRIPT HUB</span></h1>
+        <p class="text-slate-400 max-w-xl mx-auto">แจกฟรีสคริปต์ Automation, บอท และเครื่องมือเสริมต่างๆ อัปเดตล่าสุดทุกสัปดาห์</p>
+        
+        <div class="mt-8 max-w-lg mx-auto relative">
+            <input type="text" placeholder="ค้นหาสคริปต์ที่ต้องการ..." class="w-full bg-slate-800 border border-slate-700 rounded-full py-3 px-6 focus:outline-none focus:border-blue-500 transition">
+        </div>
+    </header>
 
+    <main class="max-w-6xl mx-auto mt-12 px-6">
+        
+        <div class="flex flex-wrap gap-2 mb-8 justify-center">
+            <button class="bg-blue-600 px-4 py-2 rounded-lg text-sm font-semibold">ทั้งหมด</button>
+            <button class="bg-slate-800 px-4 py-2 rounded-lg text-sm hover:bg-slate-700">Automation</button>
+            <button class="bg-slate-800 px-4 py-2 rounded-lg text-sm hover:bg-slate-700">Web Tool</button>
+            <button class="bg-slate-800 px-4 py-2 rounded-lg text-sm hover:bg-slate-700">Discord Bot</button>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="script-card p-6 rounded-2xl">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="badge-update uppercase">Updated</span>
+                    <span class="text-xs text-slate-500">v1.2.0</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Auto-Clicker Pro</h3>
+                <p class="text-slate-400 text-sm mb-6">สคริปต์ช่วยคลิกอัตโนมัติ รองรับการตั้งค่าดีเลย์และพิกัดหน้าจอแบบแม่นยำ</p>
+                <div class="flex gap-2">
+                    <button onclick="copyToClipboard('print(\'Hello World\')')" class="copy-btn flex-1 bg-slate-700 hover:bg-slate-600 py-2 rounded-lg text-sm font-medium transition">ก๊อบปี้โค้ด</button>
+                    <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="script-card p-6 rounded-2xl">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="badge-update uppercase bg-orange-500 text-white">New</span>
+                    <span class="text-xs text-slate-500">v1.0.1</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Data Scraper Tool</h3>
+                <p class="text-slate-400 text-sm mb-6">ดึงข้อมูลจากหน้าเว็บเข้าสู่ Excel ได้ทันที เหมาะสำหรับงานวิจัยและขายของออนไลน์</p>
+                <div class="flex gap-2">
+                    <button class="copy-btn flex-1 bg-slate-700 hover:bg-slate-600 py-2 rounded-lg text-sm font-medium transition">ก๊อบปี้โค้ด</button>
+                    <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="script-card p-6 rounded-2xl opacity-60">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="badge-update bg-slate-600 uppercase">Coming Soon</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Coming Soon...</h3>
+                <p class="text-slate-400 text-sm mb-6">รอติดตามสคริปต์ตัวใหม่ได้เร็วๆ นี้ แจกฟรีแน่นอน!</p>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="mt-20 text-center text-slate-500 text-sm">
+        <p>© 2026 AGAIN SCRIPT HUB - All Rights Reserved</p>
+    </footer>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('ก๊อบปี้โค้ดลง Clipboard แล้ว!');
+            });
+        }
+    </script>
 </body>
 </html>
