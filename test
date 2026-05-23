@@ -17,64 +17,67 @@ local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 
 ---------------------------------------------------
--- CONFIG (ตั้งค่าการใช้งาน)
+-- CONFIG (ระบบตรวจสอบค่าคอนฟิกเดิม)
 ---------------------------------------------------
-_G.Config = {
+-- ตรวจสอบว่าถ้ามีการตั้งค่า _G.Config มาก่อนแล้ว ให้ใช้ค่านั้นต่อ ไม่ให้เขียนทับทิ้ง
+_G.Config = _G.Config or {}
 
-
-    -- การฟาร์ม
+-- ตั้งค่า Default สำหรับส่วนที่ยังไม่ได้ระบุ
+local defaultSettings = {
     TargetCoord = Vector3.new(-384, 562, -46), 
-    DetectionRange = 30, -- เพิ่มระยะตรวจจับเพื่อให้วาร์ปง่ายขึ้น
-    BehindOffset = 1.5, -- ปรับให้ประชิดตัวมากขึ้นเพื่อให้ตีโดนแน่นอน
+    DetectionRange = 30,
+    BehindOffset = 1.5,
     AltSpacingX = 2.0,
     AltSpacingZ = 4.0,
     AltsPerRow = 3,
-    
-    -- ระบบย้ายเซิร์ฟเวอร์
     ServerHopDelay = 150,
     FileName = "TSB_Serverjoin.txt",
-
-    -- การตั้งค่า UI
+    
+    -- ตั้งค่า UI
     UiTitle = "AGAIN HUB",
     UiSize = UDim2.new(0, 360, 0, 160),
     UiPosition = UDim2.new(0.5, -180, 0.5, -80),
     UiBackground = Color3.fromRGB(18, 18, 24),
     UiBackgroundTransparency = 0.4,
     UiStroke = Color3.fromRGB(120, 170, 255),
-    TitleColor = Color3.fromRGB(140, 190, 255),
-    StatusColor = Color3.fromRGB(255, 255, 255),
-    RoleMainColor = Color3.fromRGB(255, 180, 80),
-    RoleAltColor = Color3.fromRGB(120, 170, 255),
-    TimerColor = Color3.fromRGB(255, 255, 255),
+    
+    -- เพิ่มตัวเลือก Optimization (ถ้าอยากเห็นภาพให้แก้เป็น false)
+    Disable3DRendering = true, 
+    ShowBlackScreen = true
 }
+
+-- นำค่า Default ไปใส่ในช่องที่ว่างอยู่
+for key, value in pairs(defaultSettings) do
+    if _G.Config[key] == nil then
+        _G.Config[key] = value
+    end
+end
 
 ---------------------------------------------------
 -- VARIABLES & UI SETUP
 ---------------------------------------------------
 local isMain = LocalPlayer.Name == _G.Config.MainUsername
-local startTime = tick()
-local initialKills = 0
-local lastKills = 0
-local running = true 
-local blackScreenEnabled = true -- FORCE ENABLED
-local lastMainSpawn = 0 -- สำหรับเช็คเวลาเกิดของตัวหลัก
-local isHopping = false -- เพิ่มตัวแปรเช็คสถานะการย้ายเซิร์ฟเวอร์
-
 local sg = Instance.new("ScreenGui")
 sg.Name = "AGAIN_UI"; sg.ResetOnSpawn = false; sg.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
--- Black Screen Frame (Optimization & Privacy)
-local blackFrame = Instance.new("Frame")
-blackFrame.Name = "OptimizationFrame"
-blackFrame.Size = UDim2.new(1, 0, 1, 0)
-blackFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-blackFrame.BorderSizePixel = 0
-blackFrame.Visible = true -- FORCE VISIBLE
-blackFrame.ZIndex = 0 
-blackFrame.Parent = sg
+-- ระบบหน้าจอดำ (ทำงานตามค่าคอนฟิก)
+if _G.Config.ShowBlackScreen then
+    local blackFrame = Instance.new("Frame")
+    blackFrame.Name = "OptimizationFrame"
+    blackFrame.Size = UDim2.new(1, 0, 1, 0)
+    blackFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    blackFrame.BorderSizePixel = 0
+    blackFrame.Parent = sg
+end
 
--- Force Disable 3D Rendering for CPU/GPU Savings
-RunService:Set3dRenderingEnabled(false)
+-- ระบบลดการใช้ CPU (ถ้า Disable3DRendering เป็น true จะเห็นจอค้างหรือดำ)
+if _G.Config.Disable3DRendering then
+    RunService:Set3dRenderingEnabled(false)
+else
+    RunService:Set3dRenderingEnabled(true)
+end
+
+-- [ ส่วนที่เหลือของสคริปต์คุณสามารถใส่ต่อจากตรงนี้ได้เลยครับ ]
 
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = _G.Config.UiSize; mainFrame.Position = _G.Config.UiPosition
