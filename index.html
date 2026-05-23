@@ -33,80 +33,69 @@
             font-size: 1.1rem;
         }
 
-        /* การจัดวางการ์ดแมพที่ซัพพอร์ท */
-        .maps-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 900px;
-            margin-bottom: 40px;
-        }
-
-        /* การ์ดแต่ละแมพ */
-        .map-card {
-            background-color: #1e293b;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #334155;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .map-card:hover {
-            transform: translateY(-5px);
-            border-color: #38bdf8;
-        }
-
-        /* รูปภาพแมพ */
-        .map-img {
-            width: 100%;
-            height: 140px;
-            object-fit: cover;
-            background-color: #0f172a; /* สีพื้นหลังระหว่างรอรูปโหลด */
-        }
-
-        /* ชื่อแมพด้านล่างรูป */
-        .map-name {
-            padding: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            text-align: center;
-            color: #f1f5f9;
-        }
-
-        /* กล่องสคริปต์หลัก */
-        .script-section {
+        /* กล่องหลัก */
+        .main-card {
             background-color: #111827;
-            border-radius: 14px;
-            padding: 25px;
-            width: 100%;
-            max-width: 600px;
             border: 1px solid #1f2937;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
         }
 
-        .script-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #f1f5f9;
-            margin-bottom: 12px;
+        .section-title {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
+        /* โซนรายชื่อเกม (ไม่มีรูปภาพ) */
+        .games-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 35px;
+            background-color: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        /* ป้ายชื่อเกมแต่ละเกม */
+        .game-badge {
+            background: linear-gradient(135deg, #1e40af 0%, #0f172a 100%);
+            color: #e0f2fe;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: 1px solid #3b82f6;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+
+        .game-badge:hover {
+            border-color: #38bdf8;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        /* กล่องข้อความสคริปต์ */
         .code-box {
             background-color: #030712;
             border: 1px solid #374151;
-            border-radius: 8px;
-            padding: 15px;
+            border-radius: 10px;
+            padding: 20px;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 0.95rem;
             color: #34d399;
             white-space: pre-wrap;
             word-break: break-all;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             max-height: 120px;
             overflow-y: auto;
         }
@@ -116,12 +105,12 @@
             background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
             color: #0f172a;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 14px 20px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             transition: all 0.2s;
         }
 
@@ -134,30 +123,21 @@
 <body>
 
     <h1>AGAIN HUB</h1>
-    <p class="subtitle">🚀 รายชื่อแมพที่รองรับและตัวรันสคริปต์หลัก</p>
+    <p class="subtitle">All-in-One Roblox Script Automation</p>
 
-    <div class="maps-container">
+    <div class="main-card">
         
-        <div class="map-card">
-            <img class="map-img" src="https://cdn.discordapp.com/attachments/1507664883364270170/1507664989639671908/image.png?ex=6a12b9f0&is=6a116870&hm=673ed2153e58a481ffa283c4b16e9eab5dc78b40664b95f472b3f9cf06f667d1" alt="Game 1">
-            <div class="map-name">🏜️ Arcane Lineage</div>
+        <div class="section-title">🗺️ Supported Games (รายชื่อแมพที่รองรับ)</div>
+        <div class="games-list">
+            <div class="game-badge">🎮 Arcane Lineage</div>
+            <div class="game-badge">🎮 Tower Defense Simulator</div>
+            <div class="game-badge">🎮 Grand Piece Online</div>
+            <div class="game-badge">🎮 Attack on Titan Revolution</div>
         </div>
 
-        <div class="map-card">
-            <img class="map-img" src="https://via.placeholder.com/400x200" alt="Game 2">
-            <div class="map-name">Grand Piece Online</div>
-        </div>
-
-        <div class="map-card">
-            <img class="map-img" src="https://via.placeholder.com/400x200" alt="Game 3">
-            <div class="map-name">Attack on Titan Revolution</div>
-        </div>
-
-    </div>
-
-    <div class="script-section">
-        <div class="script-title">⭐ Main Script Loader</div>
+        <div class="section-title">📜 Script Code (โหลดสคริปต์ตัวหลัก)</div>
         <div class="code-box" id="scriptCode">loadstring(game:HttpGet("https://raw.githubusercontent.com/bosskub1/again.github.io/main/script.lua"))()</div>
+        
         <button class="copy-btn" onclick="copyScript()">Copy Script</button>
     </div>
 
