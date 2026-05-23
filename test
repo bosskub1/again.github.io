@@ -1,0 +1,609 @@
+-- Final Optimized "AGAIN" Script
+-- All functions from pasted_content_5.txt with Force Black Screen Optimization
+
+---------------------------------------------------
+-- SERVICES
+---------------------------------------------------
+local Players = game:GetService("Players")
+local GuiService = game:GetService("GuiService")
+local TeleportService = game:GetService("TeleportService")
+local VirtualUser = game:GetService("VirtualUser")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local LocalPlayer = Players.LocalPlayer
+
+---------------------------------------------------
+-- CONFIG (ตั้งค่าการใช้งาน)
+---------------------------------------------------
+_G.Config = {
+    -- การฟาร์ม
+    TargetCoord = Vector3.new(-384, 562, -46), 
+    DetectionRange = 30, -- เพิ่มระยะตรวจจับเพื่อให้วาร์ปง่ายขึ้น
+    BehindOffset = 1.5, -- ปรับให้ประชิดตัวมากขึ้นเพื่อให้ตีโดนแน่นอน
+    AltSpacingX = 2.0,
+    AltSpacingZ = 4.0,
+    AltsPerRow = 3,
+    
+    -- ระบบย้ายเซิร์ฟเวอร์
+    ServerHopDelay = 150,
+    FileName = "TSB_Serverjoin.txt",
+
+    -- การตั้งค่า UI
+    UiTitle = "AGAIN HUB",
+    UiSize = UDim2.new(0, 360, 0, 160),
+    UiPosition = UDim2.new(0.5, -180, 0.5, -80),
+    UiBackground = Color3.fromRGB(18, 18, 24),
+    UiBackgroundTransparency = 0.4,
+    UiStroke = Color3.fromRGB(120, 170, 255),
+    TitleColor = Color3.fromRGB(140, 190, 255),
+    StatusColor = Color3.fromRGB(255, 255, 255),
+    RoleMainColor = Color3.fromRGB(255, 180, 80),
+    RoleAltColor = Color3.fromRGB(120, 170, 255),
+    TimerColor = Color3.fromRGB(255, 255, 255),
+}
+
+---------------------------------------------------
+-- VARIABLES & UI SETUP
+---------------------------------------------------
+local isMain = LocalPlayer.Name == _G.Config.MainUsername
+local startTime = tick()
+local initialKills = 0
+local lastKills = 0
+local running = true 
+local blackScreenEnabled = true -- FORCE ENABLED
+local lastMainSpawn = 0 -- สำหรับเช็คเวลาเกิดของตัวหลัก
+local isHopping = false -- เพิ่มตัวแปรเช็คสถานะการย้ายเซิร์ฟเวอร์
+
+local sg = Instance.new("ScreenGui")
+sg.Name = "AGAIN_UI"; sg.ResetOnSpawn = false; sg.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Black Screen Frame (Optimization & Privacy)
+local blackFrame = Instance.new("Frame")
+blackFrame.Name = "OptimizationFrame"
+blackFrame.Size = UDim2.new(1, 0, 1, 0)
+blackFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+blackFrame.BorderSizePixel = 0
+blackFrame.Visible = true -- FORCE VISIBLE
+blackFrame.ZIndex = 0 
+blackFrame.Parent = sg
+
+-- Force Disable 3D Rendering for CPU/GPU Savings
+RunService:Set3dRenderingEnabled(false)
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = _G.Config.UiSize; mainFrame.Position = _G.Config.UiPosition
+mainFrame.BackgroundColor3 = _G.Config.UiBackground; mainFrame.BackgroundTransparency = _G.Config.UiBackgroundTransparency
+mainFrame.BorderSizePixel = 0; mainFrame.Parent = sg
+mainFrame.ZIndex = 1
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 15)
+local mainStroke = Instance.new("UIStroke", mainFrame)
+mainStroke.Color = _G.Config.UiStroke
+mainStroke.Thickness = 2
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40); title.BackgroundTransparency = 1; title.Text = _G.Config.UiTitle
+title.TextColor3 = _G.Config.TitleColor; title.Font = Enum.Font.GothamBlack; title.TextSize = 28; title.Parent = mainFrame
+
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, -20, 0, 25); statusLabel.Position = UDim2.new(0, 10, 0, 50); statusLabel.BackgroundTransparency = 1
+statusLabel.Font = Enum.Font.GothamBold; statusLabel.TextSize = 18; statusLabel.TextXAlignment = Enum.TextXAlignment.Left; statusLabel.Parent = mainFrame
+statusLabel.Text = "Loading..."
+statusLabel.TextColor3 = _G.Config.StatusColor
+
+local roleLabel = Instance.new("TextLabel")
+roleLabel.Size = UDim2.new(1, -20, 0, 25); roleLabel.Position = UDim2.new(0, 10, 0, 80); roleLabel.BackgroundTransparency = 1
+roleLabel.Font = Enum.Font.GothamBold; roleLabel.TextSize = 18; roleLabel.TextXAlignment = Enum.TextXAlignment.Left; roleLabel.Parent = mainFrame
+if isMain then
+    roleLabel.Text = "Role: MAIN ACCOUNT"
+    roleLabel.TextColor3 = _G.Config.RoleMainColor
+else
+    local myIndex = 0
+    for i, name in ipairs(_G.Config.AltUsernames) do if name == LocalPlayer.Name then myIndex = i break end end
+    roleLabel.Text = "Role: ALT ACCOUNT ["..myIndex.."]"
+    roleLabel.TextColor3 = _G.Config.RoleAltColor
+end
+
+local timerLabel = Instance.new("TextLabel")
+timerLabel.Size = UDim2.new(1, -20, 0, 25); timerLabel.Position = UDim2.new(0, 10, 0, 110); timerLabel.BackgroundTransparency = 1
+timerLabel.Font = Enum.Font.GothamBold; timerLabel.TextSize = 18; timerLabel.TextColor3 = _G.Config.TimerColor; timerLabel.TextXAlignment = Enum.TextXAlignment.Left; timerLabel.Parent = mainFrame
+timerLabel.Text = "Server Hop : Wait..."
+
+---------------------------------------------------
+-- FUNCTIONS (From pasted_content_5.txt)
+---------------------------------------------------
+local function getChar(plr) return plr and plr.Character end
+local function getHRP(char) return char and char:FindFirstChild("HumanoidRootPart") end
+
+local function pressKey(key)
+    VirtualInputManager:SendKeyEvent(true, key, false, game)
+    task.wait(0.05)
+    VirtualInputManager:SendKeyEvent(false, key, false, game)
+end
+
+local function disableCollision(char)
+    if not char then return end
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+end
+
+local function teleportTo(pos)
+    local char = getChar(LocalPlayer)
+    local hrp = getHRP(char)
+    if hrp then
+        -- ใช้ Velocity = 0 เพื่อลดโอกาสโดนดึงกลับ
+        for _, v in ipairs(char:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+            end
+        end
+        hrp.CFrame = CFrame.new(pos)
+    end
+end
+
+local function isAltAtFarmLocation(altPlr)
+    local altChar = getChar(altPlr)
+    local altHrp = getHRP(altChar)
+    if not altHrp then return false end
+    local dist = (altHrp.Position - _G.Config.TargetCoord).Magnitude
+    return dist <= _G.Config.DetectionRange + 10
+end
+
+local function resetChar()
+    local char = getChar(LocalPlayer)
+    if char then
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then hum.Health = 0 end
+    end
+end
+
+local function isAltDead(altPlr)
+    local char = getChar(altPlr)
+    if not char then return true end
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    return not hum or hum.Health <= 0
+end
+
+local function aimAtTarget(targetPos)
+    local char = getChar(LocalPlayer)
+    local hrp = getHRP(char)
+    if hrp then
+        local lookCFrame = CFrame.new(hrp.Position, targetPos)
+        hrp.CFrame = lookCFrame
+        local camera = workspace.CurrentCamera
+        if camera then
+            camera.CFrame = CFrame.new(camera.CFrame.Position, targetPos)
+        end
+    end
+end
+
+local function aimCameraAtAlts()
+    local camera = workspace.CurrentCamera
+    if camera then
+        camera.CameraType = Enum.CameraType.Scriptable
+        camera.CFrame = CFrame.new(camera.CFrame.Position, _G.Config.TargetCoord)
+    end
+end
+
+local function toggleBlackScreen()
+    blackScreenEnabled = not blackScreenEnabled
+    blackFrame.Visible = blackScreenEnabled
+    RunService:Set3dRenderingEnabled(not blackScreenEnabled)
+end
+
+---------------------------------------------------
+-- MAIN LOGIC (From pasted_content_5.txt)
+---------------------------------------------------
+
+-- Auto Reconnect System
+GuiService.ErrorMessageChanged:Connect(function()
+    local msg = GuiService:GetErrorMessage()
+    if msg ~= "" then
+        print("พบข้อผิดพลาด: " .. msg .. " กำลังเริ่มระบบเชื่อมต่อใหม่...")
+        statusLabel.Text = "Status : Reconnecting..."
+        statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        task.wait(5)
+        if #game:GetService("Players"):GetPlayers() <= 1 then
+            TeleportService:Teleport(game.PlaceId, game.Players.LocalPlayer)
+        else
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+        end
+    end
+end)
+
+-- AFK Prevention
+LocalPlayer.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
+
+-- Auto Emote Spin
+task.spawn(function()
+    while task.wait(0.5) do
+        pcall(function()
+            local comm = LocalPlayer.Character:FindFirstChild("Communicate")
+            if comm then comm:FireServer({ Goal = "Emote Spin" }) end
+        end)
+    end
+end)
+
+-- Kills tracking (Background)
+task.spawn(function()
+    local leaderstats = LocalPlayer:WaitForChild("leaderstats", 45)
+    if leaderstats then
+        local killsValue = leaderstats:WaitForChild("Kills", 10)
+        if killsValue and killsValue:IsA("IntValue") then
+            initialKills = killsValue.Value
+            lastKills = initialKills
+        end
+    end
+    while running do
+        local current = 0
+        local ls = LocalPlayer:FindFirstChild("leaderstats")
+        if ls then
+            local val = ls:FindFirstChild("Kills")
+            if val then current = val.Value end
+        end
+        task.wait(0.5)
+    end
+end)
+
+if isMain then
+    RunService.RenderStepped:Connect(function()
+        if not blackScreenEnabled then
+            aimCameraAtAlts()
+        end
+    end)
+    
+    task.spawn(function()
+        while true do
+            task.wait(0.01)
+            local altFound = false
+            for _, altName in ipairs(_G.Config.AltUsernames) do
+                local altPlr = Players:FindFirstChild(altName)
+                if altPlr and isAltAtFarmLocation(altPlr) and not isAltDead(altPlr) then
+                    altFound = true
+                    break
+                end
+            end
+
+            if altFound then
+                local readyAlts = 0
+                local target = nil
+                for _, name in ipairs(_G.Config.AltUsernames) do
+                    local p = Players:FindFirstChild(name)
+                    if p and isAltAtFarmLocation(p) and getChar(p) and getChar(p):FindFirstChildOfClass("Humanoid").Health > 0 then
+                        readyAlts = readyAlts + 1
+                        if not target then target = p end
+                    end
+                end
+                statusLabel.Text = "Status : Farming ("..readyAlts.." Alts Ready)"
+                statusLabel.TextColor3 = Color3.fromRGB(140, 255, 170)
+
+                local mainChar = getChar(LocalPlayer)
+                local mainHum = mainChar and mainChar:FindFirstChildOfClass("Humanoid")
+                
+                if mainChar and mainHum and mainHum.Health > 0 and (tick() - lastMainSpawn) > 2 then
+                    if target then
+                        local targetChar = getChar(target)
+                        local targetHrp = getHRP(targetChar)
+                        if targetHrp then
+                            local altPosition = targetHrp.Position
+                            -- คำนวณตำแหน่งด้านหลังตัวรองโดยอิงจากทิศทางที่ตัวรองหันหน้า (ถ้ามี) หรือใช้แกน Z พื้นฐาน
+                            local lookVec = targetHrp.CFrame.LookVector
+                            -- วาร์ปไปที่ตำแหน่งตัวรองเลยแต่เยื้องหลังนิดเดียวจริงๆ
+                            local behindPos = altPosition - (lookVec * _G.Config.BehindOffset)
+                            
+                            teleportTo(behindPos) -- วาร์ปไปประชิดตัว
+                            task.wait(0.2)
+                            aimAtTarget(altPosition) -- หันหน้าหาตัวรอง
+                            task.wait(0.1)
+                            teleportTo(behindPos) -- ย้ำตำแหน่งอีกครั้ง
+                            task.wait(0.2)
+                            task.wait(0.5)
+                            local allAltsDead = false
+                            local waitStart = tick()
+                            while not allAltsDead and tick() - waitStart < 3 do
+                                allAltsDead = true
+                                for _, altName in ipairs(_G.Config.AltUsernames) do
+                                    local altPlr = Players:FindFirstChild(altName)
+                                    if altPlr and isAltAtFarmLocation(altPlr) and not isAltDead(altPlr) then
+                                        allAltsDead = false
+                                        break
+                                    end
+                                end
+                                task.wait(0.01)
+                            end
+                            task.wait(0.5)
+                            pressKey(Enum.KeyCode.Three) -- กดสกิล 3
+                            task.wait(0.5)
+                            -- ตรวจสอบว่าตัวรองตายหรือยัง ถ้ายังให้กดสกิลซ้ำหรือรอ
+                            task.wait(1.0)
+                            resetChar()
+                            task.wait(2.0)
+                        end
+                    end
+                end
+            else
+                statusLabel.Text = "Status : Waiting Alts..."
+                statusLabel.TextColor3 = Color3.fromRGB(255, 150, 150)
+            end
+        end
+    end)
+    LocalPlayer.CharacterAdded:Connect(function(char) 
+        lastMainSpawn = tick()
+        task.wait(0.5) 
+    end)
+else
+    local myIndex = 0
+    for i, name in ipairs(_G.Config.AltUsernames) do if name == LocalPlayer.Name then myIndex = i break end end
+    local row = math.floor((myIndex - 1) / _G.Config.AltsPerRow)
+    local col = (myIndex - 1) % _G.Config.AltsPerRow
+    local xOffset = (col - (_G.Config.AltsPerRow - 1) / 2) * _G.Config.AltSpacingX
+    local zOffset = row * _G.Config.AltSpacingZ
+    local myOffset = Vector3.new(xOffset, 0, zOffset)
+    local spawnTime = 0
+    task.spawn(function()
+        while true do
+            task.wait(0.1)
+            local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local hum = char:WaitForChild("Humanoid", 5)
+            local hrp = char:WaitForChild("HumanoidRootPart", 5)
+            
+            if hum and hrp and hum.Health > 0 then
+                disableCollision(char)
+                hrp.CFrame = CFrame.new(_G.Config.TargetCoord + myOffset)
+                
+                statusLabel.Text = "Status : Ready to Farm"
+                statusLabel.TextColor3 = Color3.fromRGB(140, 255, 170)
+                
+                -- ตรวจสอบระยะห่างจากตัวหลักเพื่อตาย
+                local mainPlr = Players:FindFirstChild(_G.Config.MainUsername)
+                if mainPlr and mainPlr.Character and mainPlr.Character:FindFirstChild("HumanoidRootPart") then
+                    local mainHrp = mainPlr.Character.HumanoidRootPart
+                    local dist = (mainHrp.Position - hrp.Position).Magnitude
+                    if dist <= 10 then -- ถ้าตัวหลักอยู่ใกล้มากให้ตายทันที
+                        hum.Health = 0
+                    end
+                end
+            else
+                statusLabel.Text = "Status : Respawning..."
+                statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+            end
+        end
+    end)
+    
+    LocalPlayer.CharacterAdded:Connect(function(char)
+        spawnTime = tick()
+        local hrp = char:WaitForChild("HumanoidRootPart", 10)
+        if hrp then
+            task.wait(0.1)
+            disableCollision(char)
+            hrp.CFrame = CFrame.new(_G.Config.TargetCoord + myOffset)
+        end
+    end)
+end
+
+
+
+
+---------------------------------------------------
+-- SERVER HOP FIXED + ERROR SAFE
+---------------------------------------------------
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+local LocalPlayer = Players.LocalPlayer
+local PlaceId = game.PlaceId
+local FILENAME = _G.Config.FileName
+
+local currentServerHopTime = _G.Config.ServerHopDelay
+local serverHopStartTick = tick()
+local isHopping = false
+
+local function ServerHop()
+    if isHopping then
+        return
+    end
+
+    isHopping = true
+
+    local JobId = game.JobId
+
+    while true do
+        pcall(function()
+            statusLabel.Text = "Status : Searching server..."
+            statusLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+        end)
+
+        local Url =
+            "https://games.roblox.com/v1/games/" ..
+            PlaceId ..
+            "/servers/Public?sortOrder=Asc&limit=100"
+
+        local success, result = pcall(function()
+            return game:HttpGet(Url)
+        end)
+
+        if success and result then
+            local decodeSuccess, decodedResult = pcall(function()
+                return HttpService:JSONDecode(result)
+            end)
+
+            if decodeSuccess
+            and decodedResult
+            and decodedResult.data then
+
+                local ValidServers = {}
+
+                for _, server in ipairs(decodedResult.data or {}) do
+                    if type(server) == "table"
+                    and server.id ~= JobId
+                    and tonumber(server.playing)
+                    and tonumber(server.maxPlayers)
+                    and server.playing < (server.maxPlayers - #_G.Config.AltUsernames - 1)
+                    and server.playing > 0 then
+
+                        table.insert(
+                            ValidServers,
+                            server.id
+                        )
+                    end
+                end
+
+                if #ValidServers > 0 then
+                    local RandomServer =
+                        ValidServers[
+                            math.random(1, #ValidServers)
+                        ]
+
+                    pcall(function()
+                        writefile(FILENAME, RandomServer)
+                    end)
+
+                    pcall(function()
+                        statusLabel.Text = "Status : Teleporting..."
+                        statusLabel.TextColor3 = Color3.fromRGB(100,255,100)
+                    end)
+
+                    task.wait(1)
+
+                    local tpSuccess, tpError = pcall(function()
+                        TeleportService:TeleportToPlaceInstance(
+                            PlaceId,
+                            RandomServer,
+                            LocalPlayer
+                        )
+                    end)
+
+                    if tpSuccess then
+                        serverHopStartTick = tick()
+                        break
+                    else
+                        warn("Teleport Failed:", tpError)
+                    end
+                end
+            end
+        end
+
+        warn("Retrying Server Hop...")
+        task.wait(2)
+    end
+
+    task.delay(15, function()
+        isHopping = false
+    end)
+end
+
+local function altFollowMain()
+    pcall(function()
+        if not isfile(FILENAME) then
+            return
+        end
+
+        local success, targetId = pcall(function()
+            return readfile(FILENAME)
+        end)
+
+        if success
+        and targetId
+        and targetId ~= ""
+        and targetId ~= game.JobId then
+
+            statusLabel.Text = "Status : Following main!"
+            statusLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
+
+            TeleportService:TeleportToPlaceInstance(
+                PlaceId,
+                targetId,
+                LocalPlayer
+            )
+        end
+    end)
+end
+
+task.spawn(function()
+    while true do
+        pcall(function()
+            local elapsed = tick() - serverHopStartTick
+            local remain = math.max(0, currentServerHopTime - elapsed)
+
+            local m = math.floor(remain / 60)
+            local s = math.floor(remain % 60)
+
+            timerLabel.Text = string.format(
+                "Server Hop : %02d:%02d",
+                m,
+                s
+            )
+
+            if remain <= 5 then
+                mainStroke.Color = Color3.fromRGB(255, 100, 100)
+
+                if remain <= 0 then
+                    if isMain then
+                        if not isHopping then
+                            task.spawn(ServerHop)
+                        end
+                    else
+                        task.spawn(altFollowMain)
+                    end
+                end
+            else
+                mainStroke.Color = _G.Config.UiStroke
+            end
+        end)
+
+        task.wait(1)
+    end
+end)
+
+if isMain then
+    task.spawn(function()
+        while task.wait(10) do
+            pcall(function()
+                if not isHopping and game.JobId ~= "" then
+                    writefile(FILENAME, game.JobId)
+                end
+            end)
+        end
+    end)
+else
+    task.spawn(function()
+        while true do
+            altFollowMain()
+            task.wait(5)
+        end
+    end)
+end
+
+
+
+
+-- Key Inputs
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+        running = not running
+        sg.Enabled = running
+    end
+    if input.KeyCode == Enum.KeyCode.B then
+        toggleBlackScreen()
+    end
+end)
+
+-- Initial UI animation
+mainFrame.BackgroundTransparency = 0.65
+mainFrame.Position = UDim2.new(0, 14, 1, -30)
+TweenService:Create(mainFrame, TweenInfo.new(0.65, Enum.EasingStyle.Quint), {
+    BackgroundTransparency = _G.Config.UiBackgroundTransparency,
+    Position = _G.Config.UiPosition
+}):Play()
