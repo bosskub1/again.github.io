@@ -3,90 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AGAIN SCRIPT HUB | แหล่งรวมสคริปต์ฟรี</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>My Script Hub</title>
     <style>
-        body { font-family: 'Prompt', sans-serif; background-color: #0b0f1a; color: #e2e8f0; }
-        .script-card { background: #161d2f; border: 1px solid #2d3748; transition: all 0.3s ease; }
-        .script-card:hover { border-color: #3b82f6; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1); }
-        .badge-update { background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
-        .copy-btn:active { transform: scale(0.95); }
+        /* สไตล์พื้นฐานโทนเข้ม (Dark Mode) */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        /* กล่องสคริปต์ */
+        .script-container {
+            background-color: #1e293b;
+            border-radius: 12px;
+            padding: 25px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #334155;
+        }
+
+        .script-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f1f5f9;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        /* รายชื่อแมพที่ซัพพอร์ท */
+        .supported-maps {
+            margin-bottom: 20px;
+        }
+
+        .supported-maps h3 {
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #0369a1;
+            color: #e0f2fe;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        /* กล่องข้อความสำหรับก๊อปปี้สคริปต์ */
+        .code-box {
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #34d399;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        /* ปุ่มกดก๊อปปี้ */
+        .copy-btn {
+            background-color: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            font-size: 1rem;
+        }
+
+        .copy-btn:hover {
+            background-color: #7dd3fc;
+        }
     </style>
 </head>
-<body class="pb-20">
+<body>
 
-    <header class="py-16 px-6 text-center border-b border-white/5 bg-slate-900/50">
-        <h1 class="text-4xl font-extrabold text-white mb-4 italic">AGAIN <span class="text-blue-500">SCRIPT HUB</span></h1>
-        <p class="text-slate-400 max-w-xl mx-auto">แจกฟรีสคริปต์ Automation, บอท และเครื่องมือเสริมต่างๆ อัปเดตล่าสุดทุกสัปดาห์</p>
+    <h1>Welcome to My Script Hub</h1>
+    <p class="subtitle">แจกสคริปต์อัปเดตล่าสุด พร้อมรายชื่อแมพที่รองรับ</p>
+
+    <div class="script-container">
+        <div class="script-title">🚀 Super Cool Hub v1.0</div>
         
-        <div class="mt-8 max-w-lg mx-auto relative">
-            <input type="text" placeholder="ค้นหาสคริปต์ที่ต้องการ..." class="w-full bg-slate-800 border border-slate-700 rounded-full py-3 px-6 focus:outline-none focus:border-blue-500 transition">
+        <div class="supported-maps">
+            <h3>🗺️ Supported Maps (แมพที่รองรับ):</h3>
+            <span class="badge">Blox Fruits</span>
+            <span class="badge">King Legacy</span>
+            <span class="badge">BedWars</span>
         </div>
-    </header>
 
-    <main class="max-w-6xl mx-auto mt-12 px-6">
+        <div class="code-box" id="scriptCode">loadstring(game:HttpGet("https://raw.githubusercontent.com/bosskub1/again.github.io/main/script.lua"))()</div>
         
-        <div class="flex flex-wrap gap-2 mb-8 justify-center">
-            <button class="bg-blue-600 px-4 py-2 rounded-lg text-sm font-semibold">ทั้งหมด</button>
-            <button class="bg-slate-800 px-4 py-2 rounded-lg text-sm hover:bg-slate-700">Automation</button>
-            <button class="bg-slate-800 px-4 py-2 rounded-lg text-sm hover:bg-slate-700">Web Tool</button>
-            <button class="bg-slate-800 px-4 py-2 rounded-lg text-sm hover:bg-slate-700">Discord Bot</button>
-        </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            <div class="script-card p-6 rounded-2xl">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="badge-update uppercase">Updated</span>
-                    <span class="text-xs text-slate-500">v1.2.0</span>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-2">Auto-Clicker Pro</h3>
-                <p class="text-slate-400 text-sm mb-6">สคริปต์ช่วยคลิกอัตโนมัติ รองรับการตั้งค่าดีเลย์และพิกัดหน้าจอแบบแม่นยำ</p>
-                <div class="flex gap-2">
-                    <button onclick="copyToClipboard('print(\'Hello World\')')" class="copy-btn flex-1 bg-slate-700 hover:bg-slate-600 py-2 rounded-lg text-sm font-medium transition">ก๊อบปี้โค้ด</button>
-                    <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="script-card p-6 rounded-2xl">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="badge-update uppercase bg-orange-500 text-white">New</span>
-                    <span class="text-xs text-slate-500">v1.0.1</span>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-2">Data Scraper Tool</h3>
-                <p class="text-slate-400 text-sm mb-6">ดึงข้อมูลจากหน้าเว็บเข้าสู่ Excel ได้ทันที เหมาะสำหรับงานวิจัยและขายของออนไลน์</p>
-                <div class="flex gap-2">
-                    <button class="copy-btn flex-1 bg-slate-700 hover:bg-slate-600 py-2 rounded-lg text-sm font-medium transition">ก๊อบปี้โค้ด</button>
-                    <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="script-card p-6 rounded-2xl opacity-60">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="badge-update bg-slate-600 uppercase">Coming Soon</span>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-2">Coming Soon...</h3>
-                <p class="text-slate-400 text-sm mb-6">รอติดตามสคริปต์ตัวใหม่ได้เร็วๆ นี้ แจกฟรีแน่นอน!</p>
-            </div>
-
-        </div>
-    </main>
-
-    <footer class="mt-20 text-center text-slate-500 text-sm">
-        <p>© 2026 AGAIN SCRIPT HUB - All Rights Reserved</p>
-    </footer>
+        <button class="copy-btn" onclick="copyScript()">Copy Script</button>
+    </div>
 
     <script>
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('ก๊อบปี้โค้ดลง Clipboard แล้ว!');
+        // ฟังก์ชันสำหรับกดก๊อปปี้สคริปต์อัตโนมัติ
+        function copyScript() {
+            const scriptText = document.getElementById("scriptCode").innerText;
+            navigator.clipboard.writeText(scriptText).then(() => {
+                alert("ก๊อปปี้สคริปต์เรียบร้อยแล้ว!");
+            }).catch(err => {
+                console.error('ไม่สามารถก๊อปปี้ได้: ', err);
             });
         }
     </script>
+
 </body>
 </html>
