@@ -53,11 +53,11 @@
             gap: 8px;
         }
 
-        /* โซนรายชื่อเกม (ไม่มีรูปภาพ) */
+        /* โซนรายชื่อเกมแบบเรียงลงมา */
         .games-list {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            flex-direction: column; /* เรียงเป็นแนวตั้งลงมา */
+            gap: 12px;
             margin-bottom: 35px;
             background-color: #1e293b;
             padding: 20px;
@@ -65,23 +65,73 @@
             border: 1px solid #334155;
         }
 
-        /* ป้ายชื่อเกมแต่ละเกม */
-        .game-badge {
+        /* แถวข้อมูลเกมแต่ละเกม */
+        .game-row {
+            display: flex;
+            align-items: center;
             background: linear-gradient(135deg, #1e40af 0%, #0f172a 100%);
             color: #e0f2fe;
-            padding: 8px 16px;
+            padding: 14px 20px;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             border: 1px solid #3b82f6;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: all 0.2s;
         }
 
-        .game-badge:hover {
+        .game-row:hover {
             border-color: #38bdf8;
-            transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+            transform: translateX(6px); /* เอฟเฟกต์เลื่อนขวาเวลาชี้เมาส์ */
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        /* 🟢 สไตล์จุดสีพื้นฐาน */
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        /* จุดสีเขียว - Online */
+        .dot-green {
+            background-color: #10b981;
+            box-shadow: 0 0 10px #10b981, 0 0 20px #10b981;
+            animation: pulse-green 2s infinite;
+        }
+
+        /* จุดสีเหลือง - Updating */
+        .dot-yellow {
+            background-color: #f59e0b;
+            box-shadow: 0 0 10px #f59e0b, 0 0 20px #f59e0b;
+            animation: pulse-yellow 2s infinite;
+        }
+
+        /* จุดสีแดง - Offline */
+        .dot-red {
+            background-color: #ef4444;
+            box-shadow: 0 0 10px #ef4444, 0 0 20px #ef4444;
+            animation: pulse-red 2s infinite;
+        }
+
+        /* แอนิเมชันกระพริบของแต่ละสี */
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 14px #10b981, 0 0 25px #10b981; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        @keyframes pulse-yellow {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 14px #f59e0b, 0 0 25px #f59e0b; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 14px #ef4444, 0 0 25px #ef4444; }
+            100% { transform: scale(0.95); opacity: 0.8; }
         }
 
         /* กล่องข้อความสคริปต์ */
@@ -123,16 +173,29 @@
 <body>
 
     <h1>AGAIN HUB</h1>
-    <p class="subtitle">All-in-One Roblox Script Automation</p>
+    <p class="subtitle">All-in-One Roblox Script</p>
 
     <div class="main-card">
         
-        <div class="section-title">🗺️ Supported Games (รายชื่อแมพที่รองรับ)</div>
+        <div class="section-title">🗺️ Supported Games & Status (แมพที่รองรับและสถานะ)</div>
         <div class="games-list">
-            <div class="game-badge">🎮 Arcane Lineage</div>
-            <div class="game-badge">🎮 Tower Defense Simulator</div>
-            <div class="game-badge">🎮 Grand Piece Online</div>
-            <div class="game-badge">🎮 Attack on Titan Revolution</div>
+            
+            <div class="game-row">
+                <div class="status-dot dot-green"></div> Arcane Lineage (Online)
+            </div>
+            
+            <div class="game-row">
+                <div class="status-dot dot-green"></div> Tower Defense Simulator (Online)
+            </div>
+            
+            <div class="game-row">
+                <div class="status-dot dot-yellow"></div> Grand Piece Online (Updating)
+            </div>
+            
+            <div class="game-row">
+                <div class="status-dot dot-red"></div> Attack on Titan Revolution (Offline)
+            </div>
+
         </div>
 
         <div class="section-title">📜 Script Code (โหลดสคริปต์ตัวหลัก)</div>
