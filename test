@@ -20,6 +20,13 @@ local LocalPlayer = Players.LocalPlayer
 -- CONFIG (ตั้งค่าการใช้งาน)
 ---------------------------------------------------
 _G.Config = {
+    -- บัญชี
+    MainUsername = "Void_DzX",
+    AltUsernames = { 
+        "SlimeBlue767",
+        "Neon_Dzx",
+    },
+
     -- การฟาร์ม
     TargetCoord = Vector3.new(-384, 562, -46), 
     DetectionRange = 30, -- เพิ่มระยะตรวจจับเพื่อให้วาร์ปง่ายขึ้น
